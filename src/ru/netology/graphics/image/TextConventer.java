@@ -35,6 +35,16 @@ public class TextConventer implements TextGraphicsConverter{
         // Вот так просто мы скачаем картинку из интернета :)
         BufferedImage img = ImageIO.read(new URL(url));
 
+        int naturalImageWidth = img.getWidth();
+        int naturalImageHeight = img.getHeight();
+
+        if(maxRatio != 0){
+            double naturalRatio = (double) naturalImageWidth / naturalImageHeight;
+            if(naturalRatio > maxRatio){
+                throw new BadImageSizeException(maxRatio, naturalRatio);
+            }
+        }
+
         // Если конвертер попросили проверять на максимально допустимое
         // соотношение сторон изображения, то вам здесь нужно сделать эту проверку,
         // и, если картинка не подходит, выбросить исключение BadImageSizeException.
