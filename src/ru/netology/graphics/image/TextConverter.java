@@ -7,22 +7,16 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.net.URL;
 
-public class TextConventer implements TextGraphicsConverter{
+public class TextConverter implements TextGraphicsConverter {
 
     private int maxWidth = 0;
     private int maxHeight = 0;
     private double maxRatio = 0;
     private TextColorSchema schema = new ColorSchema();
 
-    public TextConventer() {
-
-
-    }
-
-
     @Override
     public String convert(String url) throws IOException, BadImageSizeException {
-        URL url1 = new URL(url);
+        /*URL url1 = new URL(url);
         BufferedImage image = ImageIO.read(url1);
         WritableRaster raster = image.getRaster();
         int width = raster.getWidth();
@@ -30,20 +24,25 @@ public class TextConventer implements TextGraphicsConverter{
         double ratio = (double) width / height;
         if (width > maxWidth || height > maxHeight || ratio > maxRatio) {
             throw new BadImageSizeException(ratio, maxRatio);
-        }
+        }*/
 
         // Вот так просто мы скачаем картинку из интернета :)
         BufferedImage img = ImageIO.read(new URL(url));
 
         int naturalImageWidth = img.getWidth();
         int naturalImageHeight = img.getHeight();
+        double naturalRatio = (double) naturalImageWidth / naturalImageHeight;
 
-        if(maxRatio != 0){
-            double naturalRatio = (double) naturalImageWidth / naturalImageHeight;
-            if(naturalRatio > maxRatio){
+        if (maxRatio != 0 && naturalRatio > maxRatio) {
                 throw new BadImageSizeException(maxRatio, naturalRatio);
-            }
         }
+
+        if(maxRatio > 1 ){
+            int newWidth = (int) (naturalImageWidth * maxRatio);
+        } else if (maxRatio < 1 && maxRatio > 0) {
+            int newHeight = (int) (naturalImageHeight * maxRatio);
+        }
+
 
         // Если конвертер попросили проверять на максимально допустимое
         // соотношение сторон изображения, то вам здесь нужно сделать эту проверку,
@@ -61,8 +60,8 @@ public class TextConventer implements TextGraphicsConverter{
         // будет 100x10 (в 1.5 раза меньше).
         // Подумайте, какими действиями можно вычислить новые размеры.
         // Не получается? Спросите вашего руководителя по курсовой, поможем.
-        int newWidth = ???;
-        int newHeight = ???;
+        int newWidth = maxWidth;
+        int newHeight = maxWidth / newWidth * naturalImageHeight;
 
         // Теперь нам нужно попросить картинку изменить свои размеры на новые.
         // Последний параметр означает, что мы просим картинку плавно сузиться
@@ -108,8 +107,8 @@ public class TextConventer implements TextGraphicsConverter{
         // получить степень белого пикселя (int color выше) и по ней
         // получить соответствующий символ c. Логикой превращения цвета
         // в символ будет заниматься другой объект, который мы рассмотрим ниже
-        for ??? {
-            for ??? {
+        for ???{
+            for ???{
                 int color = bwRaster.getPixel(w, h, new int[3])[0];
                 char c = schema.convert(color);
             ??? //запоминаем символ c, например, в двумерном массиве или как-то ещё на ваше усмотрение
