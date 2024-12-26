@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 public class TextConverter implements TextGraphicsConverter {
 
@@ -16,15 +17,6 @@ public class TextConverter implements TextGraphicsConverter {
 
     @Override
     public String convert(String url) throws IOException, BadImageSizeException {
-        /*URL url1 = new URL(url);
-        BufferedImage image = ImageIO.read(url1);
-        WritableRaster raster = image.getRaster();
-        int width = raster.getWidth();
-        int height = raster.getHeight();
-        double ratio = (double) width / height;
-        if (width > maxWidth || height > maxHeight || ratio > maxRatio) {
-            throw new BadImageSizeException(ratio, maxRatio);
-        }*/
 
         // Вот так просто мы скачаем картинку из интернета :)
         BufferedImage img = ImageIO.read(new URL(url));
@@ -37,11 +29,11 @@ public class TextConverter implements TextGraphicsConverter {
                 throw new BadImageSizeException(maxRatio, naturalRatio);
         }
 
-        if(maxRatio > 1 ){
+        /*if(maxRatio > 1 ){
             int newWidth = (int) (naturalImageWidth * maxRatio);
         } else if (maxRatio < 1 && maxRatio > 0) {
             int newHeight = (int) (naturalImageHeight * maxRatio);
-        }
+        }*/
 
 
         // Если конвертер попросили проверять на максимально допустимое
@@ -60,8 +52,10 @@ public class TextConverter implements TextGraphicsConverter {
         // будет 100x10 (в 1.5 раза меньше).
         // Подумайте, какими действиями можно вычислить новые размеры.
         // Не получается? Спросите вашего руководителя по курсовой, поможем.
+
+
         int newWidth = maxWidth;
-        int newHeight = maxWidth / newWidth * naturalImageHeight;
+        int newHeight = naturalImageHeight / (300 / maxWidth); //naturalImageWidth
 
         // Теперь нам нужно попросить картинку изменить свои размеры на новые.
         // Последний параметр означает, что мы просим картинку плавно сузиться
@@ -107,22 +101,41 @@ public class TextConverter implements TextGraphicsConverter {
         // получить степень белого пикселя (int color выше) и по ней
         // получить соответствующий символ c. Логикой превращения цвета
         // в символ будет заниматься другой объект, который мы рассмотрим ниже
-        for ???{
-            for ???{
+
+        //int[] color = new int [3];
+        char[][] resultChars = new char[newHeight][newWidth];
+
+        for (int h = 0; h < newHeight; h++){
+            for (int w = 0;w < newWidth; w++){
                 int color = bwRaster.getPixel(w, h, new int[3])[0];
                 char c = schema.convert(color);
-            ??? //запоминаем символ c, например, в двумерном массиве или как-то ещё на ваше усмотрение
+                resultChars[h][w] = c; //запоминаем символ c, например, в двумерном массиве или как-то ещё на ваше усмотрение
             }
         }
+
+        StringBuilder result = new StringBuilder();
+
+        for (int h = 0; h < newHeight; h++) {
+            for (int w = 0; w < newWidth; w++) {
+                result.append(resultChars[h][w]);
+                result.append(resultChars[h][w]);
+            }
+            result.append("\n");
+        }
+
+
+
+        /*for (int h = 0; h < newHeight; h++){
+            result.append(resultChars[h]).append("\n"); //
+        }*/
+
 
         // Осталось собрать все символы в один большой текст.
         // Для того, чтобы изображение не было слишком узким, рекомендую
         // каждый пиксель превращать в два повторяющихся символа, полученных
         // от схемы.
 
-        return ???; // Возвращаем собранный текст.
-
-
+        return result.toString();
     }
 
     @Override

@@ -1,11 +1,13 @@
 package ru.netology.graphics.image;
 
 public class ColorSchema implements TextColorSchema{
-    private final char[] colors = {'▇', '●', '◉', '◍', '◎', '○', '☉', '◌', '-'};
+    private final char[] colorsWindows = {'#', '$', '@', '%', '*', '+', '-', '\''};
+    private final char[] colorsMac = {'▇', '●', '◉', '◍', '◎', '○', '☉', '◌', '-'};
+    int indexConvertCoefficientMac = 29;
+    int indexConvertCoefficientWindows = 32;
 
     @Override
     public char convert(int color) {
-        int indexConvertCoefficient = 29;
-        return colors[color / indexConvertCoefficient];
+        return colorsWindows[color / indexConvertCoefficientWindows];
     }
 }
