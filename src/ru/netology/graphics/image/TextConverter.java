@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
 public class TextConverter implements TextGraphicsConverter {
 
@@ -24,17 +23,12 @@ public class TextConverter implements TextGraphicsConverter {
         int naturalImageWidth = img.getWidth();
         int naturalImageHeight = img.getHeight();
         double naturalRatio = (double) naturalImageWidth / naturalImageHeight;
+        int newWidth = naturalImageWidth;
+        int newHeight = naturalImageHeight;
 
         if (maxRatio != 0 && naturalRatio > maxRatio) {
-                throw new BadImageSizeException(maxRatio, naturalRatio);
+            throw new BadImageSizeException(maxRatio, naturalRatio);
         }
-
-        /*if(maxRatio > 1 ){
-            int newWidth = (int) (naturalImageWidth * maxRatio);
-        } else if (maxRatio < 1 && maxRatio > 0) {
-            int newHeight = (int) (naturalImageHeight * maxRatio);
-        }*/
-
 
         // Если конвертер попросили проверять на максимально допустимое
         // соотношение сторон изображения, то вам здесь нужно сделать эту проверку,
@@ -54,8 +48,35 @@ public class TextConverter implements TextGraphicsConverter {
         // Не получается? Спросите вашего руководителя по курсовой, поможем.
 
 
-        int newWidth = maxWidth;
-        int newHeight = naturalImageHeight / (300 / maxWidth); //naturalImageWidth
+        if (maxWidth != 0 && maxHeight == 0 && naturalImageWidth > maxWidth) {
+            newWidth = maxWidth;
+            newHeight = naturalImageHeight / (naturalImageWidth / maxWidth);
+        } else if (maxHeight != 0 && maxWidth == 0 && naturalImageHeight > maxHeight) {
+            newHeight = maxHeight;
+            newWidth = naturalImageWidth / (naturalImageHeight / maxHeight);
+        }
+
+        /*if (maxWidth != 0 && maxHeight != 0 && naturalImageWidth > maxWidth || naturalImageHeight > maxHeight) {
+            if((naturalImageHeight / maxHeight) >= (naturalImageWidth / maxWidth)){
+                newHeight = maxHeight;
+                newWidth = naturalImageWidth / (naturalImageHeight / maxHeight);
+            } else {
+                newWidth = maxWidth;
+                newHeight = naturalImageHeight / (naturalImageWidth / maxWidth);
+            }
+        }*/
+
+
+
+        /*
+        if((naturalImageWidth / maxWidth) >= (naturalImageHeight / maxHeight)){
+                newWidth = maxWidth;
+                newHeight = naturalImageHeight / (newWidth / maxWidth);
+            } else {
+                newHeight = maxHeight;
+                newWidth = naturalImageWidth / (newHeight / maxHeight);
+            }
+        * */
 
         // Теперь нам нужно попросить картинку изменить свои размеры на новые.
         // Последний параметр означает, что мы просим картинку плавно сузиться
@@ -102,12 +123,12 @@ public class TextConverter implements TextGraphicsConverter {
         // получить соответствующий символ c. Логикой превращения цвета
         // в символ будет заниматься другой объект, который мы рассмотрим ниже
 
-        //int[] color = new int [3];
+        int[] colorPixel = new int [3];
         char[][] resultChars = new char[newHeight][newWidth];
 
-        for (int h = 0; h < newHeight; h++){
-            for (int w = 0;w < newWidth; w++){
-                int color = bwRaster.getPixel(w, h, new int[3])[0];
+        for (int h = 0; h < newHeight; h++) {
+            for (int w = 0; w < newWidth; w++) {
+                int color = bwRaster.getPixel(w, h, colorPixel)[0];
                 char c = schema.convert(color);
                 resultChars[h][w] = c; //запоминаем символ c, например, в двумерном массиве или как-то ещё на ваше усмотрение
             }
@@ -122,13 +143,6 @@ public class TextConverter implements TextGraphicsConverter {
             }
             result.append("\n");
         }
-
-
-
-        /*for (int h = 0; h < newHeight; h++){
-            result.append(resultChars[h]).append("\n"); //
-        }*/
-
 
         // Осталось собрать все символы в один большой текст.
         // Для того, чтобы изображение не было слишком узким, рекомендую

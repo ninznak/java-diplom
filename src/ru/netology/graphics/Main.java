@@ -16,10 +16,7 @@ public class Main {
 
         // Или то же, но с выводом на экран:
         String url = "https://raw.githubusercontent.com/netology-code/java-diplom/main/pics/simple-test.png";
-
-        converter.setMaxHeight(300);
-        converter.setMaxWidth(300);
-        converter.setMaxRatio(4);
+        converter.setMaxHeight(40);
 
         String imgTxt = converter.convert(url);
 
