@@ -54,29 +54,15 @@ public class TextConverter implements TextGraphicsConverter {
         } else if (maxHeight != 0 && maxWidth == 0 && naturalImageHeight > maxHeight) {
             newHeight = maxHeight;
             newWidth = naturalImageWidth / (naturalImageHeight / maxHeight);
-        }
-
-        /*if (maxWidth != 0 && maxHeight != 0 && naturalImageWidth > maxWidth || naturalImageHeight > maxHeight) {
-            if((naturalImageHeight / maxHeight) >= (naturalImageWidth / maxWidth)){
-                newHeight = maxHeight;
-                newWidth = naturalImageWidth / (naturalImageHeight / maxHeight);
-            } else {
+        } else if (maxWidth != 0 && maxHeight != 0 && naturalImageWidth > maxWidth || naturalImageHeight > maxHeight) {
+            if((naturalImageWidth / maxWidth) >= (naturalImageHeight / maxHeight)){
                 newWidth = maxWidth;
                 newHeight = naturalImageHeight / (naturalImageWidth / maxWidth);
-            }
-        }*/
-
-
-
-        /*
-        if((naturalImageWidth / maxWidth) >= (naturalImageHeight / maxHeight)){
-                newWidth = maxWidth;
-                newHeight = naturalImageHeight / (newWidth / maxWidth);
             } else {
                 newHeight = maxHeight;
-                newWidth = naturalImageWidth / (newHeight / maxHeight);
+                newWidth = naturalImageWidth / (naturalImageHeight / maxHeight);
             }
-        * */
+        }
 
         // Теперь нам нужно попросить картинку изменить свои размеры на новые.
         // Последний параметр означает, что мы просим картинку плавно сузиться
@@ -160,13 +146,11 @@ public class TextConverter implements TextGraphicsConverter {
     @Override
     public void setMaxHeight(int height) {
         maxHeight = height;
-
     }
 
     @Override
     public void setMaxRatio(double maxRatio) {
         this.maxRatio = maxRatio;
-
     }
 
     @Override
